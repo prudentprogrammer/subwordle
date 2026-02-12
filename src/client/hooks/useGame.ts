@@ -106,10 +106,13 @@ export function useGame() {
         return;
       }
 
-      animations.triggerReveal(data.gameState.guesses.length - 1);
       setGameState(data.gameState);
       setCurrentGuess('');
-      updateKeyboardColors(data.gameState.guesses, data.gameState.evaluations);
+      animations.triggerReveal(data.gameState.guesses.length - 1);
+      // Defer keyboard color update until after flip animation finishes
+      setTimeout(() => {
+        updateKeyboardColors(data.gameState.guesses, data.gameState.evaluations);
+      }, 1500);
     } catch {
       showError('Failed to submit guess');
     }

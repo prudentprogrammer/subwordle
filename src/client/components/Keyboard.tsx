@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import Key from './Key.js';
 
 type KeyColor = 'correct' | 'present' | 'absent' | undefined;
@@ -16,11 +17,11 @@ const ROWS = [
 ];
 
 export default function Keyboard({ colors, onKey, onEnter, onBackspace }: KeyboardProps) {
-  const handleClick = (key: string) => {
+  const handleClick = useCallback((key: string) => {
     if (key === 'Enter') onEnter();
     else if (key === 'Backspace') onBackspace();
     else onKey(key);
-  };
+  }, [onEnter, onBackspace, onKey]);
 
   return (
     <div className="flex flex-col items-center gap-[6px] w-full max-w-[500px] px-2">

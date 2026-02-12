@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 type KeyColor = 'correct' | 'present' | 'absent' | undefined;
 
 interface KeyProps {
@@ -13,7 +15,7 @@ const COLOR_CLASSES: Record<string, string> = {
   absent: 'bg-[#3a3a3c]',
 };
 
-export default function Key({ value, color, isWide, onClick }: KeyProps) {
+export default memo(function Key({ value, color, isWide, onClick }: KeyProps) {
   const bg = color ? COLOR_CLASSES[color] : 'bg-[#818384]';
   const width = isWide ? 'min-w-[58px] sm:min-w-[65px]' : 'min-w-[30px] sm:min-w-[43px]';
 
@@ -26,4 +28,4 @@ export default function Key({ value, color, isWide, onClick }: KeyProps) {
       {value === 'Backspace' ? '⌫' : value}
     </button>
   );
-}
+});

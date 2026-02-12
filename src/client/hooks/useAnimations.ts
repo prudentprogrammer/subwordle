@@ -5,6 +5,7 @@ export function useAnimations() {
   const [revealingRow, setRevealingRow] = useState(-1);
   const [popTile, setPopTile] = useState<{ row: number; col: number } | null>(null);
   const shakeTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const revealTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const popTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const triggerShake = useCallback((row: number) => {
@@ -14,8 +15,9 @@ export function useAnimations() {
   }, []);
 
   const triggerReveal = useCallback((row: number) => {
+    if (revealTimeout.current) clearTimeout(revealTimeout.current);
     setRevealingRow(row);
-    setTimeout(() => setRevealingRow(-1), 1500);
+    revealTimeout.current = setTimeout(() => setRevealingRow(-1), 1500);
   }, []);
 
   const triggerPop = useCallback((row: number, col: number) => {

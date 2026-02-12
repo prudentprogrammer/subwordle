@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { memo, type CSSProperties } from 'react';
 import type { TileState } from '../../shared/api.js';
 
 interface TileProps {
@@ -15,7 +15,7 @@ const STATE_COLORS: Record<TileState, string> = {
   absent: 'bg-[#3a3a3c] border-[#3a3a3c]',
 };
 
-export default function Tile({ letter, state, isRevealing, revealDelay = 0, isPop }: TileProps) {
+export default memo(function Tile({ letter, state, isRevealing, revealDelay = 0, isPop }: TileProps) {
   const hasLetter = letter !== '';
   const evaluated = state !== undefined;
 
@@ -46,4 +46,4 @@ export default function Tile({ letter, state, isRevealing, revealDelay = 0, isPo
       {letter}
     </div>
   );
-}
+});

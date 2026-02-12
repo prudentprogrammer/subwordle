@@ -1,4 +1,4 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode, useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { useGame } from './hooks/useGame.js';
@@ -19,15 +19,15 @@ function App() {
 
   // Auto-show stats when game ends
   const gameOver = game.gameState?.status === 'won' || game.gameState?.status === 'lost';
-  const [didAutoShowStats, setDidAutoShowStats] = useState(false);
+  const didAutoShowStats = useRef(false);
 
-  if (gameOver && !didAutoShowStats && !showStats) {
-    // Delay to let reveal animation finish
-    setTimeout(() => {
-      setShowStats(true);
-      setDidAutoShowStats(true);
-    }, 2000);
-  }
+  useEffect(() => {
+    if (gameOver && !didAutoShowStats.current) {
+      didAutoShowStats.current = true;
+      const timeout = setTimeout(() => setShowStats(true), 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [gameOver]);
 
   if (game.loading) {
     return (
