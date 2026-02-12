@@ -17,7 +17,7 @@ export async function createGamePost(category: string): Promise<void> {
   const postId = post.id;
 
   // Store word and metadata
-  const word = selectWord(category);
+  const word = await selectWord(category);
   await redis.set(`post:${postId}:word`, word);
   await redis.set(`post:${postId}:category`, category);
   await redis.set(`post:${postId}:dayNumber`, String(dayNumber));

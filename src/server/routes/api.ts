@@ -9,7 +9,7 @@ import type {
   SubmitWordResponse,
 } from '../../shared/api.js';
 import { evaluateGuess, isGameOver, isWin } from '../../shared/gameLogic.js';
-import { getDailyWord, isValidGuess } from '../services/wordService.js';
+import { getDailyWord, isValidGuess, addToWordBank } from '../services/wordService.js';
 import { recordResult, getStats, getLeaderboard } from '../services/statsService.js';
 
 const api = new Hono();
@@ -142,6 +142,10 @@ api.post('/submit-word', async (c) => {
     return c.json(response, 400);
   }
 
+  // Add directly to the word bank for future games
+  await addToWordBank(subredditName, normalized, category, username);
+
+  // Also record the submission for tracking
   const submission = JSON.stringify({
     word: normalized,
     category,
