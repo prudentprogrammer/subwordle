@@ -6,8 +6,13 @@ const forms = new Hono();
 
 forms.post('/category-submit', async (c) => {
   const body = await c.req.json();
-  const rawCategory = body?.values?.category;
-  const category = Array.isArray(rawCategory) ? rawCategory[0] ?? 'general' : rawCategory ?? 'general';
+  console.log('[category-submit] full body:', JSON.stringify(body));
+
+  // Extract category - try multiple possible structures
+  const raw = body?.values?.category ?? body?.category ?? body?.data?.category ?? body?.results?.category;
+  const category = Array.isArray(raw) ? (raw[0] ?? 'general') : (raw ?? 'general');
+  console.log('[category-submit] extracted category:', category);
+
   await createGamePost(category);
   const response: UiResponse = {
     showToast: `SubWordle created with ${category} category!`,
