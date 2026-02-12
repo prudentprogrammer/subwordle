@@ -118,6 +118,23 @@ export function useGame() {
     }
   }, [gameState, currentGuess, showError, animations, updateKeyboardColors]);
 
+  const giveUp = useCallback(async () => {
+    if (!gameState || gameState.status !== 'playing') return;
+    try {
+      const res = await fetch('/api/give-up', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (data.gameState) {
+        setGameState(data.gameState);
+        setCurrentGuess('');
+      }
+    } catch {
+      showError('Failed to give up');
+    }
+  }, [gameState, showError]);
+
   // Physical keyboard listener
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -145,6 +162,7 @@ export function useGame() {
     addLetter,
     removeLetter,
     submitGuess,
+    giveUp,
     ...animations,
   };
 }

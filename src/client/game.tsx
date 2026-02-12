@@ -16,6 +16,7 @@ function App() {
   const [showSubmitWord, setShowSubmitWord] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showGiveUpConfirm, setShowGiveUpConfirm] = useState(false);
 
   // Auto-show stats when game ends
   const gameOver = game.gameState?.status === 'won' || game.gameState?.status === 'lost';
@@ -70,7 +71,15 @@ function App() {
         />
       </div>
 
-      <div className="pb-2 sm:pb-4 w-full flex justify-center">
+      <div className="pb-2 sm:pb-4 w-full flex flex-col items-center gap-2">
+        {game.gameState.status === 'playing' && (
+          <button
+            onClick={() => setShowGiveUpConfirm(true)}
+            className="bg-[#3a3a3c] text-white text-sm font-bold px-4 py-2 rounded touch-manipulation hover:bg-[#4a4a4c] transition-colors"
+          >
+            Give Up
+          </button>
+        )}
         <Keyboard
           colors={game.keyboardColors}
           onKey={game.addLetter}
@@ -99,6 +108,32 @@ function App() {
       )}
 
       {showLeaderboard && <Leaderboard onClose={() => setShowLeaderboard(false)} />}
+
+      {showGiveUpConfirm && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-[#1a1a1b] rounded-lg p-6 mx-4 max-w-sm w-full text-center">
+            <p className="text-white text-lg font-bold mb-2">Give Up?</p>
+            <p className="text-[#818384] text-sm mb-6">The answer will be revealed.</p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => setShowGiveUpConfirm(false)}
+                className="bg-[#3a3a3c] text-white font-bold px-5 py-2 rounded touch-manipulation"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowGiveUpConfirm(false);
+                  void game.giveUp();
+                }}
+                className="bg-[#b91c1c] text-white font-bold px-5 py-2 rounded touch-manipulation"
+              >
+                Give Up
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {gameOver && !showStats && !showLeaderboard && (
         <button

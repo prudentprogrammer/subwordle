@@ -70,5 +70,5 @@ export async function addToWordBank(
 }
 
 export function isValidGuess(word: string): boolean {
-  return word.length === 5 && isValidWord(word);
+  return word.length === 5 && /^[a-z]+$/.test(word);
 }

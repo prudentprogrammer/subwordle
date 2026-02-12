@@ -106,6 +106,34 @@ api.post('/guess', async (c) => {
   return c.json(response);
 });
 
+api.post('/give-up', async (c) => {
+  const postId = context.postId!;
+  const userId = context.userId!;
+  const username = (await reddit.getCurrentUsername()) ?? 'anonymous';
+
+  const gameKey = `post:${postId}:user:${userId}:game`;
+  const existing = await redis.get(gameKey);
+  if (!existing) {
+    return c.json({ type: 'error', error: 'Game not initialized' } as const, 400);
+  }
+
+  const gameState: GameState = JSON.parse(existing);
+
+  if (gameState.status !== 'playing') {
+    return c.json({ type: 'error', error: 'Game is already over' } as const, 400);
+  }
+
+  const category = (await redis.get(`post:${postId}:category`)) ?? 'general';
+  const answer = await getDailyWord(postId, category);
+
+  gameState.status = 'lost';
+  gameState.answer = answer;
+  await redis.set(gameKey, JSON.stringify(gameState));
+  await recordResult(postId, userId, username, gameState.guesses.length, false);
+
+  return c.json({ type: 'give-up', gameState });
+});
+
 api.get('/stats', async (c) => {
   const postId = context.postId!;
   const stats = await getStats(postId);
